@@ -183,6 +183,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CDialogProgress.h" />
     <ClInclude Include="MemoryCheat.h" />
     <ClInclude Include="MemoryCheatDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -190,6 +191,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CDialogProgress.cpp" />
     <ClCompile Include="MemoryCheat.cpp" />
     <ClCompile Include="MemoryCheatDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
