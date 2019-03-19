@@ -23,7 +23,7 @@ public:
 	//进程列表的图标
 	CImageList m_imgList;
 	//获取32为进程表
-	BOOL GetProgressList();
+	BOOL GetProcessList();
 public:
 	//当选中选中的的进程的ID
 	static DWORD m_dwProcessId;
