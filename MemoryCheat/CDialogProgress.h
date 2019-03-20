@@ -31,7 +31,7 @@ public:
 	static CString m_strProcessName;
 
 	//双击进程列表事件
-	afx_msg void OnNMDlbclkList1(NMHDR *pNMHER, LRESULT *pResult);
+	afx_msg void OnNMDblclkList1(NMHDR *pNMHER, LRESULT *pResult);
 };
 
 

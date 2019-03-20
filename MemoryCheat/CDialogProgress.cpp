@@ -109,7 +109,7 @@ void CDialogProgress::DoDataExchange(CDataExchange *pDX)
 	DDX_Control(pDX, IDC_LIST1, m_lst);
 }
 BEGIN_MESSAGE_MAP(CDialogProgress, CDialog)
-	ON_NOTIFY(NM_DBLCLK, IDC_LIST1, &CDialogProgress::OnNMDlbclkList1)
+	ON_NOTIFY(NM_DBLCLK, IDC_LIST1, &CDialogProgress::OnNMDblclkList1)
 END_MESSAGE_MAP()
 
 //CDialog消息处理

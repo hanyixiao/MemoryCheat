@@ -184,6 +184,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CDialogProgress.h" />
+    <ClInclude Include="MemFinder.h" />
     <ClInclude Include="MemoryCheat.h" />
     <ClInclude Include="MemoryCheatDlg.h" />
     <ClInclude Include="Resource.h" />
