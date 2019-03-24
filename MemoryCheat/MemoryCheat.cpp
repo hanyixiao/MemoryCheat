@@ -34,6 +34,14 @@ CMemoryCheatApp::CMemoryCheatApp()
 
 CMemoryCheatApp theApp;
 
+//提权函数
+static bool EnableDebugPrivilege()
+{
+	HANDLE hToken;
+	LUID sedebugnameValue;
+	TOKEN_PRIVILEGES tkp;
+	if()
+}
 
 // CMemoryCheatApp 初始化
 
