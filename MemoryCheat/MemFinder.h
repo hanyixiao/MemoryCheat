@@ -92,7 +92,7 @@ public:
 	}
 	//调用回调函数
 	bool RemoteCall(unsigned char code[], size_t len,
-		unsigned para[], size_t paraLen)
+		unsigned char para[], size_t paraLen)
 	{
 		if (!IsValidHandle()) {
 
@@ -100,7 +100,55 @@ public:
 		//申请代码内存
 		PVOID mFuncAddr = ::VirtualAllocEx(m_hProcess, NULL, len,
 			MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+		if (nullptr == mFuncAddr) {
+			return false;
+		}
+		//申请函数参数内存
+		PVOID ParamAddr = ::VirtualAllocEx(m_hProcess, NULL, len,
+			MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+		if (nullptr == ParamAddr) {
+			return false;
+		}
 
+		//写入代码，和参数
+		this->Write((DWORD)mFuncAddr, code, len);
+		this->Write((DWORD)ParamAddr, para, paraLen);
+
+		// 创建远程线程
+		DWORD dwThreadId;
+		HANDLE hThread = ::CreateRemoteThread(m_hProcess, NULL, 0,
+			(LPTHREAD_START_ROUTINE)mFuncAddr, ParamAddr, 0, &dwThreadId);
+
+		//等待执行完成
+		if (hThread&&hThread != INVALID_HANDLE_VALUE) {
+			WaitForSingleObject(hThread,1000);
+			//等待指定对象处于信号状态或超1s
+		}
+		
+
+		//释放内存
+		VirtualFreeEx(hThread, mFuncAddr, len, MEM_RELEASE);
+		VirtualFreeEx(hThread, ParamAddr, paraLen, MEM_RELEASE);
+		return true;
+	}
+	//设置初次的扫描函数
+	virtual void SetCallbackFirst(bool(_stdcall *pGoonFirst)(void *pArgs,
+		size_t nAddrCount, size_t index), void *pArgs)
+	{
+		m_pGoonFirst = pGoonFirst;
+		m_pArgsFirst = pArgs;
+	}
+	//设置初次扫描之后的回调函数
+	virtual void SetCallbackNext(bool(_stdcall *pGoonFirst)(void *pArgs,
+		size_t nAddrCount, size_t index), void *pArgs)
+	{
+		m_pGoonNext = pGoonFirst;
+		m_pArgsNext = pArgs;
+	}
+	//获得结果
+	virtual const std::list<DWORD> &GetResult() const
+	{
+		return m_arlist;
 	}
 private:
 	//关闭进程句柄
@@ -186,6 +234,6 @@ private:
 	//下次扫描 回调函数
 	PFUN_CALLBACK m_pGoonNext{ nullptr };
 	// 回调函数的参数
-	void *m_pArgsFrist{ nullptr };
+	void *m_pArgsFirst{ nullptr };
 	void *m_pArgsNext{ nullptr };
 };
