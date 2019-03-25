@@ -199,7 +199,7 @@ private:
 
 			//读取内容
 			T tReadValue;
-			if (!::ReadProcessMemory(m_hProcess, (LPCVOID)addr, &tReadValue, len, NULL)
+			if (!::ReadProcessMemory(m_hProcess, (LPCVOID)addr, &tReadValue, len, NULL))
 			{
 				continue;//没有读取成功
 			}

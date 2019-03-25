@@ -10,7 +10,35 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+//回调函数
+static bool *g_pGoon = nullptr;
 
+//进度范围表（0-rage）
+static const int range = 100;
+
+//首次扫描函数
+bool __stdcall FirstSearchRoutine(void *pArgs, size_t nPageCount, size_t index)
+{
+	CProgressCtrl *p = (CProgressCtrl *)pArgs;
+	if (nPageCount == 0) {
+		return *g_pGoon;
+	}
+	p->SetPos(static_cast<int>(index / (nPageCount / float(range))));
+	return g_pGoon;
+}
+
+//下次扫描函数
+bool __stdcall NextSearchRoutine(void *pArgs, size_t addrCount, size_t index)
+{
+	CProgressCtrl *p = (CProgressCtrl *)pArgs;
+	if (addrCount == 0) {
+		return *g_pGoon;
+	}
+
+	p->SetPos(static_cast<int>(index / (addrCount / float(range))));
+	return *g_pGoon;
+
+}
 
 // CMemoryCheatDlg 对话框
 

@@ -40,7 +40,22 @@ static bool EnableDebugPrivilege()
 	HANDLE hToken;
 	LUID sedebugnameValue;
 	TOKEN_PRIVILEGES tkp;
-	if()
+	if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
+		&hToken)) {
+		return FALSE;
+	}
+	if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &sedebugnameValue)) {
+		CloseHandle(hToken);
+		return FALSE;
+	}
+	tkp.PrivilegeCount = 1;
+	tkp.Privileges[0].Luid = sedebugnameValue;
+	tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+	if (!AdjustTokenPrivileges(hToken, FALSE, &tkp, sizeof(tkp), NULL, NULL)) {
+		CloseHandle(hToken);
+		return false;
+	}
+	return true;
 }
 
 // CMemoryCheatApp 初始化
@@ -68,7 +83,8 @@ BOOL CMemoryCheatApp::InitInstance()
 
 	// 激活“Windows Native”视觉管理器，以便在 MFC 控件中启用主题
 	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
-
+	//看不懂
+	EnableDebugPrivilege();
 	// 标准初始化
 	// 如果未使用这些功能并希望减小
 	// 最终可执行文件的大小，则应移除下列
