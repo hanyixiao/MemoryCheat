@@ -73,7 +73,7 @@ public:
 	
 	virtual BOOL PreTranslateMessage(MSG *msg);
 	afx_msg void OnBnClickedButtonProgress();
-	afx_msg void OnBnClickedButtonFrist();
+	afx_msg void OnBnClickedButtonFirst();
 	afx_msg void OnBnClickedButtonNext();
 	afx_msg void OnBnClickedButtonStop();
 	//临时地址列表
@@ -111,6 +111,8 @@ public:
 	CString m_strAddressEdit;
 	// 值类型
 	CString m_strValueTypeEdit;
+	CComboBox m_cbbValueTypeEdit;
+	CString m_strValueEdit;
 	/***************/
 	struct {
 		int index;

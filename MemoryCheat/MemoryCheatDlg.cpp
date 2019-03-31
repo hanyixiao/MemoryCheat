@@ -43,24 +43,63 @@ bool __stdcall NextSearchRoutine(void *pArgs, size_t addrCount, size_t index)
 // CMemoryCheatDlg 对话框
 
 
+//
+//CMemoryCheatDlg::CMemoryCheatDlg(CWnd* pParent /*=nullptr*/)
+//	: CDialogEx(IDD_MEMORYCHEAT_DIALOG, pParent)
+//{
+//	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+//}
 
-CMemoryCheatDlg::CMemoryCheatDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_MEMORYCHEAT_DIALOG, pParent)
+//构造函数
+CMemoryCheatDlg::CMemoryCheatDlg(CWnd *pParent)
+	:CDialogEx(IDD_MEMORYCHEAT_DIALOG, pParent)
+	, m_strSearchValue(_T(""))
+	, m_strValueType(_T(""))
+	, m_strLimitBegin(TEXT("0x00000000"))
+	, m_strLimitEnd(TEXT("0xffffffff"))
+	, m_strDesEdit(TEXT(""))
+	, m_strValueEdit(TEXT(""))
+	, m_strValueTypeEdit(TEXT(""))
+	, m_strAddressEdit(TEXT("")) 
 {
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_hIcon = AfxGetApp()->LoadIconW(IDR_MAINFRAME);
+	g_pGoon = &m_bGoon;
 }
 
 void CMemoryCheatDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_LIST_ADDRESS_TEMP, m_lstAddressTemp);
+	DDX_Control(pDX, IDC_LIST_ADDRESS_TARGET, m_lstAddressTarget);
+	DDX_Text(pDX, IDC_EDIT_SEARCH_VALUE, m_strSearchValue);
+	DDX_CBString(pDX, IDC_COMBO_VALUE_TYPE, m_strValueType);
+	DDX_Control(pDX, IDC_COMBO_VALUE_TYPE,m_cbbValueType);
+	DDX_Text(pDX, IDC_EDIT_LIMIT_START, m_strLimitBegin);
+	DDX_Text(pDX, IDC_EDIT_LIMIT_END, m_strLimitEnd);
+	DDX_Control(pDX, IDC_PROGRESS_SEARCH, m_pProcess);
+	DDX_Text(pDX, IDC_EDIT_DES, m_strDesEdit);
+	DDX_Text(pDX, IDC_EDIT_VALUE, m_strValueEdit);
+	DDX_CBString(pDX, IDC_COMBO_VALUE_TYPE2, m_strValueTypeEdit);
+	DDX_Control(pDX, IDC_COMBO_VALUE_TYPE2, m_cbbValueTypeEdit);
+	DDX_Text(pDX, IDC_EDIT_ADDRESS, m_strAddressEdit);
 }
 
 BEGIN_MESSAGE_MAP(CMemoryCheatDlg, CDialogEx)
+	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON1, &CMemoryCheatDlg::OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_BUTTON3, &CMemoryCheatDlg::OnBnClickedButton3)
-	ON_BN_CLICKED(IDC_BUTTON6, &CMemoryCheatDlg::OnBnClickedButton6)
+	ON_BN_CLICKED(IDC_BUTTON_PROCESS, &CMemoryCheatDlg::OnBnClickedButtonProgress)
+	ON_BN_CLICKED(IDC_BUTTON_FIRST, &CMemoryCheatDlg::OnBnClickedButtonFirst)
+	ON_BN_CLICKED(IDC_BUTTON_NEXT, &CMemoryCheatDlg::OnBnClickedButtonNext)
+	ON_BN_CLICKED(IDC_BUTTON_STOP, &CMemoryCheatDlg::OnBnClickedButtonStop)
+	ON_NOTIFY(NM_DBLCLK, IDC_LIST_ADDRESS_TEMP, &CMemoryCheatDlg::OnNMDblclkListAddressTemp)
+	ON_NOTIFY(NM_CLICK, IDC_LIST_ADDRESS_TARGET, &CMemoryCheatDlg::OnNMClickListAddressTarget)
+	ON_BN_CLICKED(IDC_BUTTON_ADD, &CMemoryCheatDlg::OnBnClickedButtonAdd)
+	ON_BN_CLICKED(IDC_BUTTON_DEL, &CMemoryCheatDlg::OnBnClickedButtonDel)
+	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CMemoryCheatDlg::OnBnClickedButtonSave)
+	ON_CBN_SELCHANGE(IDC_COMBO_VALUE_TYPE2, &CMemoryCheatDlg::OnCbnSelchangeComboValueTypeEdit)
+	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_BUTTON_PLANT_INJECT, &CMemoryCheatDlg::OnBnClickedButtonPlantInject)
 END_MESSAGE_MAP()
 
 
@@ -76,7 +115,14 @@ BOOL CMemoryCheatDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	//界面初始化
+	{
+		//临时数据列表
+		{
 
+		}
+
+	}
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
