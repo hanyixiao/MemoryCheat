@@ -3,8 +3,15 @@
 // 供 MemoryCheat.rc 使用
 //
 #define IDD_MEMORYCHEAT_DIALOG          102
+#define IDS_ABOUTBOX                    101
 #define IDR_MAINFRAME                   128
 #define IDD_DIALOG_PROGRESS_LIST        131
+#define IDS_STRING_EQUAL                102
+#define IDS_STRING_1BYTE                103
+#define IDS_STRING_2BYTE                104
+#define IDS_STRING_4BYTE                105
+#define IDS_STRING_FLOAT                106
+#define IDS_STRING_DOUBLE               107
 #define IDC_BUTTON1                     1000
 #define IDC_BUTTON_PROCESS              1000
 #define IDC_PROGRESS1                   1001

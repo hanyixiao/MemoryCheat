@@ -39,7 +39,7 @@ public:
 	/*********************************/
 	//临时地址列表框
 	enum {
-		EListTempIndexAddres = 0,//地址
+		EListTempIndexAddress = 0,//地址
 	};
 	typedef std::tuple<DWORD> TupleTempLineData;
 	//增加数据

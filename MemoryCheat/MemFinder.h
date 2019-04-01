@@ -19,7 +19,7 @@ public:
 		SafeCloseHandle();
 	}
 	//打开进程
-	bool openProcess(DWORD dwProcessId)
+	bool OpenProcess(DWORD dwProcessId)
 	{
 		//若果进程是打开的 关闭进成
 		if (IsValidHandle())
@@ -146,7 +146,7 @@ public:
 		m_pArgsNext = pArgs;
 	}
 	//获得结果
-	virtual const std::list<DWORD> &GetResult() const
+	virtual const std::list<DWORD> &GetResults() const
 	{
 		return m_arlist;
 	}
