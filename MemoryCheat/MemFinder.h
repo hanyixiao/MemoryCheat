@@ -47,8 +47,8 @@ public:
 	template< typename T>
 	bool FindFirst(DWORD dwProcessId, DWORD dwBegin, DWORD dwEnd, T value)
 	{
-		m_arList.clear();
-		return _FindFirst();
+		m_arlist.clear();
+		return _FindFirst(dwProcessId,dwBegin,dwEnd,value);
 	}
 	/*
 	*在findFirst的基础上继续寻找
@@ -166,17 +166,69 @@ private:
 	template <typename T>
 	bool _FindFirst(DWORD dwProcessId, DWORD dwBegin, DWORD dwEnd, T value)
 	{
-		HANDLE hProcess = ::OpenProcess(PROCESS_QUERY_INFORMATION | 
-			PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE,
-			false, dwProcessId);
+
+		HANDLE hProcess = ::OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, dwProcessId);
 		m_hProcess = hProcess;
-		if (m_hProcess == NULL) {
+		if (hProcess == NULL) {
 			return false;
 		}
-		//目标长度
+
+		// 目标值的长度
 		const size_t len = sizeof(value);
 		const void *pValue = &value;
+		MEMORY_BASIC_INFORMATION mbi;
+		DWORD dwBaseAddress = dwBegin;
+		do {
+			// 如果查询内存属性失败: 越过此页,进行一下页的查询
+			if (0 == VirtualQueryEx(hProcess, (LPVOID)dwBaseAddress, &mbi, sizeof(mbi))) {
+				dwBaseAddress += m_dwPageSize;
+				continue;
+			}
+
+			// 下一步的搜索地址
+			dwBaseAddress = (DWORD)mbi.BaseAddress + mbi.RegionSize;
+
+			// 回调函数
+			if (!m_pGoonFirst || !m_pGoonFirst(m_pArgsFirst, dwEnd - dwBegin, dwBaseAddress - dwBegin)) {
+				return false;
+			}
+
+			// 判数内存属性
+			if (mbi.State != MEM_COMMIT || (mbi.Protect != PAGE_READWRITE &&
+				mbi.Protect != PAGE_READONLY &&
+				mbi.Protect != PAGE_EXECUTE_READ &&
+				mbi.Protect != PAGE_EXECUTE_READWRITE)) {
+				//跳过未分配或不可读的区域
+				continue;
+			}
+
+
+			// 读亽内容
+			DWORD dwReadSize;
+			char *Buf = new char[mbi.RegionSize];
+			if (ReadProcessMemory(hProcess, (LPVOID)mbi.BaseAddress, Buf, mbi.RegionSize, &dwReadSize) == 0) {
+				delete[] Buf;
+				CloseHandle(hProcess);
+				return false;
+			}
+
+			//搜索这块内存区域
+			{
+				DWORD dwBaseAddr = (DWORD)mbi.BaseAddress;
+				for (size_t i = 0; i < mbi.RegionSize - len; ++i) {
+					void *p = &Buf[i];
+					// 等于要查找的值？
+					if (memcmp(p, pValue, len) == 0) {
+						m_arlist.push_back(dwBaseAddr + i);
+					}
+				}
+			}
+			// 删除内存区域
+			delete[] Buf;
+		} while (dwBaseAddress < dwEnd);
+		return true;
 	}
+
 	template< typename T>
 	bool _FindNext(T value)
 	{
